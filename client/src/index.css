@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+.bg_image{
+    background-image: url("../public/lusaya.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
