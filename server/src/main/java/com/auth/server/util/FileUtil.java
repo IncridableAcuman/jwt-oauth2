@@ -1,4 +1,47 @@
 package com.auth.server.util;
 
+import com.auth.server.exception.CustomBadRequestException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
+@Component
 public class FileUtil {
+    @Value("${file.upload.dir}")
+    private String uploadDir;
+    public String saveFile(MultipartFile file){
+        if (file==null || file.isEmpty()){
+            throw new CustomBadRequestException("File is null or empty");
+        }
+        try {
+            Path filePath = Paths.get(uploadDir);
+            if (!Files.exists(filePath)){
+                Files.createDirectories(filePath);
+            }
+            String originalName = file.getOriginalFilename();
+            String extension=".";
+            if (originalName != null){
+                extension = originalName.substring(originalName.indexOf("."));
+            }
+            String fileName = UUID.randomUUID()+extension;
+            Path path = filePath.resolve(fileName);
+            return path.toString();
+        } catch (IOException exception){
+            throw new CustomBadRequestException(exception.getMessage());
+        }
+    }
+    public void removeFile(String fileName){
+        try {
+            Path path = Paths.get(uploadDir,fileName);
+            Files.deleteIfExists(path);
+        } catch (IOException exception){
+            throw new CustomBadRequestException(exception.getMessage());
+        }
+    }
 }
