@@ -1,50 +1,30 @@
-import { Lock, Mail, UserRound } from "lucide-react";
+import { useState } from "react";
+import AuthForm from "../components/AuthForm";
 const Auth = () => {
+  const [activeTab, setActiveTab] = useState(true);
   return (
     <div className="min-h-screen bg_image flex items-center justify-center p-6">
       <div className="w-full max-w-5xl h-150 bg-white rounded-xl overflow-hidden shadow-2xl flex">
-        <div className="hidden md:block md:w-1/2">
+        <div className="relative hidden md:block md:w-1/2">
           <img src="./martin.jpg" alt="martin" />
+
+          <div className="absolute inset-0 bg-black/20" />
+
+          <div className="absolute bottom-12 left-0 right-0 text-center text-white px-10">
+            <h2 className="text-4xl font-bold">Welcome Page</h2>
+
+            <p className="mt-4 text-sm opacity-80">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
+          </div>
         </div>
         <div className="w-full md:w-1/2 bg-white px-12 py-10">
           <div className="flex justify-end mb-12 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
-            <button>Sign In</button>
-            <button>Sign Up</button>
+            <button onClick={()=>setActiveTab(true)} className={`${activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign In</button>
+            <button onClick={()=>setActiveTab(false)} className={`${!activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign Up</button>
           </div>
-          <h1 className="text-3xl font-bold mb-10">Register</h1>
-          <form className="space-y-8">
-            <div className="flex items-center border-b pb-2">
-              <UserRound size={20} />
-              <input
-                type="text"
-                placeholder="Username"
-                className="ml-3 w-full outline-none"
-              />
-            </div>
-            <div className="flex items-center border-b pb-2">
-              <Mail size={20} />
-              <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email"
-                className="ml-3 w-full outline-none"
-              />
-            </div>
-            <div className="flex items-center border-b pb-2">
-              <Lock size={20} />
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="*********"
-                className="ml-3 w-full outline-none"
-              />
-            </div>
-            <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
-              Sign Up
-            </button>
-          </form>
+          <h1 className="text-3xl font-bold mb-10">{!activeTab ?"Sign Up":"Sign In"}</h1>
+          <AuthForm activeTab={activeTab} />
         </div>
       </div>
     </div>
