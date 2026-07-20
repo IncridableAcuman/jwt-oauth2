@@ -20,4 +20,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.from(exception,HttpStatus.BAD_REQUEST,request));
     }
+    @ExceptionHandler(CustomInternalServerErrorException.class)
+    public ResponseEntity<ErrorResponse> customInternalServerErrorExceptionHandler(CustomInternalServerErrorException exception,HttpServletRequest request){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.from(exception,HttpStatus.INTERNAL_SERVER_ERROR,request));
+    }
 }
