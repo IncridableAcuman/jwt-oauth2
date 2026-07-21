@@ -2,7 +2,7 @@ package com.auth.server.util;
 
 import com.auth.server.config.RabbitMQConfig;
 import com.auth.server.dto.EmailPayload;
-import com.auth.server.exception.CustomBadRequestException;
+import com.auth.server.exception.CustomInternalServerErrorException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class MailUtil {
             helper.setText(payload.text(),true);
             javaMailSender.send(message);
         } catch (MessagingException exception){
-            throw new CustomBadRequestException(exception.getMessage());
+            throw new CustomInternalServerErrorException(exception.getMessage());
         }
     }
 }

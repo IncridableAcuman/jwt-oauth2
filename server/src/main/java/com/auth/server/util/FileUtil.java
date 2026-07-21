@@ -1,6 +1,7 @@
 package com.auth.server.util;
 
 import com.auth.server.exception.CustomBadRequestException;
+import com.auth.server.exception.CustomInternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,7 @@ public class FileUtil {
             Path path = filePath.resolve(fileName);
             return path.toString();
         } catch (IOException exception){
-            throw new CustomBadRequestException(exception.getMessage());
+            throw new CustomInternalServerErrorException(exception.getMessage());
         }
     }
     public void removeFile(String fileName){
@@ -41,7 +42,7 @@ public class FileUtil {
             Path path = Paths.get(uploadDir,fileName);
             Files.deleteIfExists(path);
         } catch (IOException exception){
-            throw new CustomBadRequestException(exception.getMessage());
+            throw new CustomInternalServerErrorException(exception.getMessage());
         }
     }
 }
