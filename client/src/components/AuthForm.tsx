@@ -2,6 +2,7 @@ import { Lock, Mail, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
+  
   return (
     <>
       <form className={`${!activeTab ? "space-y-8":"space-y-4"}`}>

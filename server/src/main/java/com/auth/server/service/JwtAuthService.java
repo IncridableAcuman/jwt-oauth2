@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.auth.server.constants.Values.clientUrl;
+
 @Service
 @RequiredArgsConstructor
 public class JwtAuthService {
@@ -56,7 +58,7 @@ public class JwtAuthService {
     public void forgotPassword(ForgotPasswordRequest request){
         UserEntity user = findUserByEmail(request.getEmail());
         String token = jwtUtil.getAccessToken(user);
-        String url="http://localhost:5173/reset-password?token="+token;
+        String url=clientUrl+"/reset-password?token="+token;
         EmailPayload payload = new EmailPayload(user.getEmail(),"Reset Password",url);
         rabbitMQProducer.sendMail(payload);
     }

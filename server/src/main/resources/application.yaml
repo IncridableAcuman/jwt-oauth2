@@ -47,3 +47,5 @@ file:
   upload:
     dir: ${UPLOAD_DIR}
 
+client:
+  url: ${CLIENT_URL}

@@ -5,7 +5,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -14,14 +13,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.auth.server.constants.Values.*;
+
 @Component
 public class JwtUtil {
-    @Value("${jwt.secret}")
-    private String jwtSecret;
-    @Value("${jwt.access_time}")
-    private long accessTime;
-    @Value("${jwt.refresh_time}")
-    private long refreshTime;
+
     private Key jwtKey;
 
     @PostConstruct
@@ -47,7 +43,7 @@ public class JwtUtil {
 
     }
     public String getAccessToken(UserEntity user){
-        return generateToken(user,accessTime);
+        return generateToken(user, accessTime);
     }
     public String getRefreshToken(UserEntity user){
         return generateToken(user,refreshTime);
