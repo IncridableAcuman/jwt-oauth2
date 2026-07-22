@@ -1,30 +1,56 @@
 import { Lock, Mail, UserRound } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, registerSchema } from "../schema/auth.schema";
 
 const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
-  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+  });
   return (
     <>
-      <form className={`${!activeTab ? "space-y-8":"space-y-4"}`}>
+      <form
+        className={`${!activeTab ? "space-y-8" : "space-y-4"}`}
+        onSubmit={handleSubmit((data) => console.log(data))}
+      >
         {!activeTab && (
+          <div className="">
+            <div className="flex items-center border-b pb-2">
+              <UserRound size={20} />
+              <input
+                type="text"
+                placeholder="Username"
+                {...register("username")}
+                className="ml-3 w-full outline-none"
+              />
+            </div>
+            {errors.username && (
+              <p className="mt-1 text-xs text-red-600">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
+        )}
+        <div className="">
           <div className="flex items-center border-b pb-2">
-            <UserRound size={20} />
+            <Mail size={20} />
             <input
-              type="text"
-              placeholder="Username"
+              type="email"
+              id="email"
+              {...register("email")}
+              placeholder="Email"
               className="ml-3 w-full outline-none"
             />
           </div>
-        )}
-        <div className="flex items-center border-b pb-2">
-          <Mail size={20} />
-          <input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="Email"
-            className="ml-3 w-full outline-none"
-          />
+          {errors.email && (
+            <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+          )}
         </div>
         {activeTab && (
           <div className="">
@@ -36,15 +62,18 @@ const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
             </Link>
           </div>
         )}
-        <div className="flex items-center border-b pb-2">
-          <Lock size={20} />
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="*********"
-            className="ml-3 w-full outline-none"
-          />
+        <div className="">
+          <div className="flex items-center border-b pb-2">
+            <Lock size={20} />
+            <input
+              type="password"
+              id="password"
+              {...register("password")}
+              placeholder="*********"
+              className="ml-3 w-full outline-none"
+            />
+          </div>
+          {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
         </div>
         <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
           {!activeTab ? "Sign Up" : "Sign In"}

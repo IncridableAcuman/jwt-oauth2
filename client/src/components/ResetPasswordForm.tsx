@@ -1,6 +1,9 @@
 import { Lock } from "lucide-react";
+import { useState } from "react";
 
 const ResetPasswordForm = () => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   return (
     <>
       <form className="space-y-8">
@@ -11,6 +14,7 @@ const ResetPasswordForm = () => {
             name="password"
             id="password"
             placeholder="*********"
+            
             className="ml-3 w-full outline-none"
           />
         </div>
