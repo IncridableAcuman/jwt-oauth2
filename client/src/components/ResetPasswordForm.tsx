@@ -1,32 +1,57 @@
 import { Lock } from "lucide-react";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { resetPasswordSchema } from "../schema/auth.schema";
+import type z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const ResetPasswordForm = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
+  });
+
   return (
     <>
-      <form className="space-y-8">
-        <div className="flex items-center border-b pb-2">
-          <Lock size={20} />
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="*********"
-            
-            className="ml-3 w-full outline-none"
-          />
+      <form
+        className="space-y-8"
+        onSubmit={handleSubmit((data) => console.log(data))}
+      >
+        <div className="">
+          <div className="flex items-center border-b pb-2">
+            <Lock size={20} />
+            <input
+              type="password"
+              id="password"
+              {...register("password")}
+              placeholder="*********"
+              className="ml-3 w-full outline-none"
+            />
+          </div>
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.password.message}
+            </p>
+          )}
         </div>
-        <div className="flex items-center border-b pb-2">
-          <Lock size={20} />
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="*********"
-            className="ml-3 w-full outline-none"
-          />
+        <div className="">
+          <div className="flex items-center border-b pb-2">
+            <Lock size={20} />
+            <input
+              type="password"
+              id="password"
+              {...register("confirmPassword")}
+              placeholder="*********"
+              className="ml-3 w-full outline-none"
+            />
+          </div>
+          {errors.confirmPassword && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
         <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
           Reset Password

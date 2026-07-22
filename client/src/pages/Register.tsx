@@ -1,8 +1,7 @@
-import ResetPasswordForm from "../components/ResetPasswordForm"
-
-
-const ResetPassword = () => {
-
+import { useState } from "react";
+import RegisterForm from "../components/RegisterForm";
+const Register = () => {
+  const [activeTab, setActiveTab] = useState(true);
   return (
     <div className="min-h-screen bg_image flex items-center justify-center p-6">
       <div className="w-full max-w-5xl h-150 bg-white rounded-xl overflow-hidden shadow-2xl flex">
@@ -20,12 +19,16 @@ const ResetPassword = () => {
           </div>
         </div>
         <div className="w-full md:w-1/2 bg-white px-12 py-10">
-          <h1 className="text-3xl font-bold mb-10">Reset Password</h1>
-          <ResetPasswordForm  />
+          <div className="flex justify-end mb-12 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+            <button onClick={()=>setActiveTab(true)} className={`${activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign In</button>
+            <button onClick={()=>setActiveTab(false)} className={`${!activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign Up</button>
+          </div>
+          <h1 className="text-3xl font-bold mb-10">{!activeTab ?"Sign Up":"Sign In"}</h1>
+          <RegisterForm activeTab={activeTab} />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ResetPassword
+export default Register;

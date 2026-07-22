@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthForm from "../components/AuthForm";
-const Auth = () => {
+import LoginForm from "../components/LoginForm";
+const Login = () => {
   const [activeTab, setActiveTab] = useState(true);
   return (
     <div className="min-h-screen bg_image flex items-center justify-center p-6">
@@ -24,11 +24,11 @@ const Auth = () => {
             <button onClick={()=>setActiveTab(false)} className={`${!activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign Up</button>
           </div>
           <h1 className="text-3xl font-bold mb-10">{!activeTab ?"Sign Up":"Sign In"}</h1>
-          <AuthForm activeTab={activeTab} />
+          <LoginForm activeTab={activeTab} />
         </div>
       </div>
     </div>
   );
 };
 
-export default Auth;
+export default Login;

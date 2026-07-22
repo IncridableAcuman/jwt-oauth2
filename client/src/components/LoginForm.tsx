@@ -1,17 +1,17 @@
-import { Lock, Mail, UserRound } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, registerSchema } from "../schema/auth.schema";
+import { loginSchema } from "../schema/auth.schema";
 
-const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
+const LoginForm = ({ activeTab }: { activeTab: boolean }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
   });
   return (
     <>
@@ -19,24 +19,6 @@ const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
         className={`${!activeTab ? "space-y-8" : "space-y-4"}`}
         onSubmit={handleSubmit((data) => console.log(data))}
       >
-        {!activeTab && (
-          <div className="">
-            <div className="flex items-center border-b pb-2">
-              <UserRound size={20} />
-              <input
-                type="text"
-                placeholder="Username"
-                {...register("username")}
-                className="ml-3 w-full outline-none"
-              />
-            </div>
-            {errors.username && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.username.message}
-              </p>
-            )}
-          </div>
-        )}
         <div className="">
           <div className="flex items-center border-b pb-2">
             <Mail size={20} />
@@ -73,7 +55,11 @@ const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
               className="ml-3 w-full outline-none"
             />
           </div>
-          {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.password.message}
+            </p>
+          )}
         </div>
         <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
           {!activeTab ? "Sign Up" : "Sign In"}
@@ -106,4 +92,4 @@ const AuthForm = ({ activeTab }: { activeTab: boolean }) => {
   );
 };
 
-export default AuthForm;
+export default LoginForm;
