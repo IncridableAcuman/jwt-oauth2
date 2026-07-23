@@ -1,7 +1,9 @@
 import { Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { resetPasswordSchema } from "../schema/auth.schema";
-import type z from "zod";
+import {
+  resetPasswordSchema,
+  type ResetPasswordData,
+} from "../schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const ResetPasswordForm = () => {
@@ -9,7 +11,7 @@ const ResetPasswordForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof resetPasswordSchema>>({
+  } = useForm<ResetPasswordData>({
     resolver: zodResolver(resetPasswordSchema),
   });
 

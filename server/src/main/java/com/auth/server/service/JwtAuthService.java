@@ -11,15 +11,18 @@ import com.auth.server.util.CookieUtil;
 import com.auth.server.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.auth.server.constants.Values.clientUrl;
 
 @Service
 @RequiredArgsConstructor
 public class JwtAuthService {
+    @Value("${client.url}")
+    private String clientUrl;
+
     private final UserRepository userRepository;
     private final RedisService redisService;
     private final CookieUtil cookieUtil;
@@ -72,7 +75,7 @@ public class JwtAuthService {
     }
     public UserEntity validationAndExtractionToken(String token){
         String email = jwtUtil.extractEmailFromToken(token);
-        if (!jwtUtil.validateToken(token,email)){
+        if (!jwtUtil.validateToken(token)){
             throw new CustomBadRequestException("Token is invalid or expired");}
         return findUserByEmail(email);
     }

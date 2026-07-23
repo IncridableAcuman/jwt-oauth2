@@ -5,10 +5,12 @@ import ResetPassword from "./pages/ResetPassword"
 import VerifyOtp from "./pages/VerifyOtp"
 import Register from "./pages/Register"
 import Login from "./pages/Login"
+import { ToastContainer } from "react-toastify"
 
 const App = () => {
   return (
     <>
+    <ToastContainer/>
     <Routes>
       <Route path="/" element={<Home/>} />
       <Route path="/register" element={<Register/>} />

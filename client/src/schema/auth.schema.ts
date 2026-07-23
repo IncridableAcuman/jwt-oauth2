@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import  { z } from 'zod';
 
 export const validMessaging = {
     usernameMin: "Username should be greatar than 3 character",
@@ -36,3 +36,10 @@ export const resetPasswordSchema = z.object({
     message: "Password doesn't mismatch",
     path: ["confirmPassword"]
 })
+
+
+
+export type RegisterData = z.infer<typeof registerSchema>;
+export type LoginData = z.infer<typeof loginSchema>;
+export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;

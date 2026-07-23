@@ -1,39 +1,40 @@
 import { Lock, Mail, UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../schema/auth.schema";
+import { registerSchema, type RegisterData } from "../schema/auth.schema";
+import { UseAuth } from "../provider/AuthProvider";
 
 const RegisterForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof registerSchema>>({
+  } = useForm<RegisterData>({
     resolver: zodResolver(registerSchema),
   });
+  const { handleRegister } = UseAuth();
   return (
     <>
       <form
         className={`space-y-4`}
-        onSubmit={handleSubmit((data) => console.log(data))}
+        onSubmit={handleSubmit((data) => handleRegister(data))}
       >
-          <div className="">
-            <div className="flex items-center border-b pb-2">
-              <UserRound size={20} />
-              <input
-                type="text"
-                placeholder="Username"
-                {...register("username" as any)}
-                className="ml-3 w-full outline-none"
-              />
-            </div>
-            {errors.username?.message && (
-              <p className="mt-1 text-xs text-red-600">
-                {errors.username?.message}
-              </p>
-            )}
+        <div className="">
+          <div className="flex items-center border-b pb-2">
+            <UserRound size={20} />
+            <input
+              type="text"
+              placeholder="Username"
+              {...register("username" as any)}
+              className="ml-3 w-full outline-none"
+            />
           </div>
+          {errors.username?.message && (
+            <p className="mt-1 text-xs text-red-600">
+              {errors.username?.message}
+            </p>
+          )}
+        </div>
         <div className="">
           <div className="flex items-center border-b pb-2">
             <Mail size={20} />

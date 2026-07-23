@@ -2,6 +2,7 @@ package com.auth.server.util;
 
 import com.auth.server.exception.CustomBadRequestException;
 import com.auth.server.exception.CustomInternalServerErrorException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,10 +12,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static com.auth.server.constants.Values.uploadDir;
 
 @Component
 public class FileUtil {
+    @Value("${file.upload.dir}")
+    private String uploadDir;
 
     public String saveFile(MultipartFile file){
         if (file==null || file.isEmpty()){

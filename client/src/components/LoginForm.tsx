@@ -1,23 +1,24 @@
 import { Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "../schema/auth.schema";
+import { loginSchema, type LoginData } from "../schema/auth.schema";
+import { UseAuth } from "../provider/AuthProvider";
 
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof loginSchema>>({
+  } = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
   });
+  const { handleLogin } = UseAuth();
   return (
     <>
       <form
         className={`space-y-4`}
-        onSubmit={handleSubmit((data) => console.log(data))}
+        onSubmit={handleSubmit((data) => handleLogin(data))}
       >
         <div className="">
           <div className="flex items-center border-b pb-2">
@@ -34,14 +35,14 @@ const LoginForm = () => {
             <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
           )}
         </div>
-          <div className="">
-            <Link
-              to={"/forgot-password"}
-              className="text-sm text-sky-500 hover:underline"
-            >
-              Forgot Password?
-            </Link>
-          </div>
+        <div className="">
+          <Link
+            to={"/forgot-password"}
+            className="text-sm text-sky-500 hover:underline"
+          >
+            Forgot Password?
+          </Link>
+        </div>
         <div className="">
           <div className="flex items-center border-b pb-2">
             <Lock size={20} />

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -13,10 +14,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.auth.server.constants.Values.*;
 
 @Component
 public class JwtUtil {
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+    @Value("${jwt.access_time}")
+    private long accessTime;
+    @Value("${jwt.refresh_time}")
+    private long refreshTime;
 
     private Key jwtKey;
 
@@ -46,7 +52,7 @@ public class JwtUtil {
         return generateToken(user, accessTime);
     }
     public String getRefreshToken(UserEntity user){
-        return generateToken(user,refreshTime);
+        return generateToken(user, refreshTime);
     }
     private Claims extractClaims(String token){
         return Jwts
@@ -65,10 +71,9 @@ public class JwtUtil {
     public boolean isTokenExpiration(String token){
         return extractTokenExpiration(token).before(new Date());
     }
-    public boolean validateToken(String token,String email){
+    public boolean validateToken(String token){
         try {
-            String extractedEmail = extractEmailFromToken(token);
-            return !isTokenExpiration(token) && email.equals(extractedEmail);
+            return !isTokenExpiration(token);
         } catch (Exception e) {
             return false;
         }

@@ -1,22 +1,26 @@
 import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
-import type z from "zod";
-import { forgotPasswordSchema } from "../schema/auth.schema";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordData,
+} from "../schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { UseAuth } from "../provider/AuthProvider";
 
 const ForgotPasswordForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof forgotPasswordSchema>>({
+  } = useForm<ForgotPasswordData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
+  const { handleForgotPassword } = UseAuth();
   return (
     <>
       <form
         className="space-y-8"
-        onSubmit={handleSubmit((data) => console.log(data))}
+        onSubmit={handleSubmit((data) => handleForgotPassword(data))}
       >
         <div className="">
           <div className="flex items-center border-b pb-2">
