@@ -8,6 +8,7 @@ import type {
 } from "../schema/auth.schema";
 import { toast } from "react-toastify";
 import axiosInstance from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 type AuthContextType = {
   user: IUser | null;
@@ -25,40 +26,50 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleRegister = async (data: RegisterData) => {
+  const handleRegister = async (registerData: RegisterData) => {
     try {
-      await axiosInstance.post("/auth/register", data);
+      const { data } = await axiosInstance.post("/auth/register", registerData);
+      localStorage.setItem("accessToken", data.accessToken);
+      console.log(data)
+      toast.success("Successfully");
+      navigate("/");
     } catch (error) {
       console.log(error);
       toast.error("Registration failed");
     }
   };
 
-  const handleLogin = async (data: LoginData) => {
+  const handleLogin = async (loginData: LoginData) => {
     try {
-      await axiosInstance.post("/auth/login", data);
+      const { data } = await axiosInstance.post("/auth/login", loginData);
+      localStorage.setItem("accessToken", data.accessToken);
+      toast.success("Successfully");
+      navigate("/");
     } catch (error) {
       console.log(error);
-      toast.error("Registration failed");
+      toast.error("Authentication failed");
     }
   };
 
   const handleForgotPassword = async (data: ForgotPasswordData) => {
     try {
       await axiosInstance.post("/auth/forgot-password", data);
+      toast.success("Successfully");
     } catch (error) {
       console.log(error);
-      toast.error("Registration failed");
+      toast.error("Reseting password failed");
     }
   };
 
   const handleResetPassword = async (data: ResetPasswordData) => {
     try {
       await axiosInstance.post("/auth/reset-password", data);
+      toast.success("Successfully");
     } catch (error) {
       console.log(error);
-      toast.error("Registration failed");
+      toast.error("Password updated failed");
     }
   };
 

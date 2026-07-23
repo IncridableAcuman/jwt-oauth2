@@ -2,7 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig, type AxiosInst
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: true,
-    baseURL: import.meta.env.SERVER_URL
+    baseURL: "http://localhost:8080/api/v1"
 });
 
 axiosInstance.interceptors.request.use(
@@ -22,7 +22,7 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & {
             _retry: boolean
         }
-        if ((error.response?.status === 401 || error.response?.status === 403) || !originalRequest._retry) {
+        if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
                 const { data } = await axiosInstance.get("/auth/refresh")

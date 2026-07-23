@@ -1,12 +1,7 @@
 package com.auth.server.config;
 
-import com.auth.server.service.UserDetailsServiceImp;
-import com.auth.server.util.JwtUtil;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +9,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import com.auth.server.service.UserDetailsServiceImp;
+import com.auth.server.util.JwtUtil;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -29,7 +31,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String email=null;
         if (header!=null && header.startsWith("Bearer ")){
             token=header.substring(7);
-            email= jwtUtil.extractEmailFromToken(token);
+            
+            try {
+                email= jwtUtil.extractEmailFromToken(token);
+            } catch(Exception e){
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
         if (email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
             UserDetails userDetails = userDetailsServiceImp.loadUserByUsername(email);

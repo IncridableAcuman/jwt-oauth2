@@ -18,7 +18,7 @@ const LoginForm = () => {
     <>
       <form
         className={`space-y-4`}
-        onSubmit={handleSubmit((data) => handleLogin(data))}
+        onSubmit={handleSubmit((data:LoginData) => handleLogin(data))}
       >
         <div className="">
           <div className="flex items-center border-b pb-2">
