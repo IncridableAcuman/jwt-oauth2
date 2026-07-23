@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../schema/auth.schema";
 
-const LoginForm = ({ activeTab }: { activeTab: boolean }) => {
+const LoginForm = () => {
   const {
     register,
     handleSubmit,
@@ -16,7 +16,7 @@ const LoginForm = ({ activeTab }: { activeTab: boolean }) => {
   return (
     <>
       <form
-        className={`${!activeTab ? "space-y-8" : "space-y-4"}`}
+        className={`space-y-4`}
         onSubmit={handleSubmit((data) => console.log(data))}
       >
         <div className="">
@@ -34,7 +34,6 @@ const LoginForm = ({ activeTab }: { activeTab: boolean }) => {
             <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
           )}
         </div>
-        {activeTab && (
           <div className="">
             <Link
               to={"/forgot-password"}
@@ -43,7 +42,6 @@ const LoginForm = ({ activeTab }: { activeTab: boolean }) => {
               Forgot Password?
             </Link>
           </div>
-        )}
         <div className="">
           <div className="flex items-center border-b pb-2">
             <Lock size={20} />
@@ -62,7 +60,7 @@ const LoginForm = ({ activeTab }: { activeTab: boolean }) => {
           )}
         </div>
         <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
-          {!activeTab ? "Sign Up" : "Sign In"}
+          Sign In
         </button>
       </form>
       <span className="text-sm flex items-center justify-center py-4">or</span>

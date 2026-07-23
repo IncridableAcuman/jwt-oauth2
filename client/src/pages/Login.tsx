@@ -1,7 +1,6 @@
-import { useState } from "react";
 import LoginForm from "../components/LoginForm";
+import { Link } from "react-router-dom";
 const Login = () => {
-  const [activeTab, setActiveTab] = useState(true);
   return (
     <div className="min-h-screen bg_image flex items-center justify-center p-6">
       <div className="w-full max-w-5xl h-150 bg-white rounded-xl overflow-hidden shadow-2xl flex">
@@ -20,11 +19,10 @@ const Login = () => {
         </div>
         <div className="w-full md:w-1/2 bg-white px-12 py-10">
           <div className="flex justify-end mb-12 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
-            <button onClick={()=>setActiveTab(true)} className={`${activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign In</button>
-            <button onClick={()=>setActiveTab(false)} className={`${!activeTab ? "bg-sky-500 text-white p-2 px-5 rounded":""}`}>Sign Up</button>
+            <Link to={"/register"}  className={`bg-sky-500 text-white p-2 px-5 rounded-md text-sm`}>Sign Up</Link>
           </div>
-          <h1 className="text-3xl font-bold mb-10">{!activeTab ?"Sign Up":"Sign In"}</h1>
-          <LoginForm activeTab={activeTab} />
+          <h1 className="text-3xl font-bold mb-10">Sign In</h1>
+          <LoginForm/>
         </div>
       </div>
     </div>

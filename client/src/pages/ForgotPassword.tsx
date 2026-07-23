@@ -20,7 +20,7 @@ const ForgotPassword = () => {
         </div>
         <div className="w-full md:w-1/2 bg-white px-12 py-10">
           <div className="flex justify-end mb-12 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
-            <Link to={"/auth"} className={`bg-sky-500 text-white p-2 px-5 rounded`}>
+            <Link to={"/login"} className={`bg-sky-500 text-white p-2 px-5 rounded`}>
               Sign In
             </Link>
           </div>

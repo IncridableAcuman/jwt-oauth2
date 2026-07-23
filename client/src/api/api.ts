@@ -2,7 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig, type AxiosInst
 
 const axiosInstance: AxiosInstance = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:8080/api/v1"
+    baseURL: import.meta.env.SERVER_URL
 });
 
 axiosInstance.interceptors.request.use(

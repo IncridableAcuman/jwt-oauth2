@@ -1,11 +1,10 @@
 import { Lock, Mail, UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../schema/auth.schema";
 
-const RegisterForm = ({ activeTab }: { activeTab: boolean }) => {
+const RegisterForm = () => {
   const {
     register,
     handleSubmit,
@@ -16,10 +15,9 @@ const RegisterForm = ({ activeTab }: { activeTab: boolean }) => {
   return (
     <>
       <form
-        className={`${!activeTab ? "space-y-8" : "space-y-4"}`}
+        className={`space-y-4`}
         onSubmit={handleSubmit((data) => console.log(data))}
       >
-        {!activeTab && (
           <div className="">
             <div className="flex items-center border-b pb-2">
               <UserRound size={20} />
@@ -36,7 +34,6 @@ const RegisterForm = ({ activeTab }: { activeTab: boolean }) => {
               </p>
             )}
           </div>
-        )}
         <div className="">
           <div className="flex items-center border-b pb-2">
             <Mail size={20} />
@@ -52,16 +49,6 @@ const RegisterForm = ({ activeTab }: { activeTab: boolean }) => {
             <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
           )}
         </div>
-        {activeTab && (
-          <div className="">
-            <Link
-              to={"/forgot-password"}
-              className="text-sm text-sky-500 hover:underline"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-        )}
         <div className="">
           <div className="flex items-center border-b pb-2">
             <Lock size={20} />
@@ -80,7 +67,7 @@ const RegisterForm = ({ activeTab }: { activeTab: boolean }) => {
           )}
         </div>
         <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
-          {!activeTab ? "Sign Up" : "Sign In"}
+          Sign Up
         </button>
       </form>
       <span className="text-sm flex items-center justify-center py-4">or</span>
