@@ -1,7 +1,39 @@
 @import "tailwindcss";
 
-.bg_image{
-    background-image: url("../public/lusaya.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
+/* Asosiy Fon Rasmi va Overlay Effekti */
+.bg_image {
+  background-image: linear-gradient(
+      to bottom,
+      rgba(3, 7, 18, 0.85),
+      rgba(15, 23, 42, 0.92)
+    ),
+    url("/martin.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Silliq scroll qilish */
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+/* Maxsus Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0ea5e9;
 }

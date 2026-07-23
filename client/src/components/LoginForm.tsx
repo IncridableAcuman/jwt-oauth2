@@ -1,93 +1,176 @@
-import { Lock, Mail } from "lucide-react";
+import React, { useState } from "react";
+import { Lock, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginData } from "../schema/auth.schema";
 import { UseAuth } from "../provider/AuthProvider";
+import { motion } from "framer-motion";
 
-const LoginForm = () => {
+const LoginForm: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
   });
+
   const { handleLogin } = UseAuth();
+
+  const onSubmit = async (data: LoginData) => {
+    try {
+      await handleLogin(data);
+    } catch (error) {
+      console.error("Login Error:", error);
+    }
+  };
+
   return (
-    <>
-      <form
-        className={`space-y-4`}
-        onSubmit={handleSubmit((data:LoginData) => handleLogin(data))}
-      >
-        <div className="">
-          <div className="flex items-center border-b pb-2">
-            <Mail size={20} />
+    <div className="w-full">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {/* Email Input */}
+        <div>
+          <div className="relative flex items-center group">
+            <Mail
+              size={18}
+              className="absolute left-3.5 text-gray-400 group-focus-within:text-sky-400 transition-colors duration-300"
+            />
             <input
               type="email"
               id="email"
+              placeholder="Email manzil"
               {...register("email")}
-              placeholder="Email"
-              className="ml-3 w-full outline-none"
+              className="w-full pl-11 pr-4 py-3 bg-gray-800/60 border border-gray-700/80 rounded-xl text-white placeholder-gray-500 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all duration-300"
             />
           </div>
-          {errors.email && (
-            <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+          {errors.email?.message && (
+            <motion.p
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-1.5 text-xs text-red-400 font-medium pl-1"
+            >
+              {errors.email.message}
+            </motion.p>
           )}
         </div>
-        <div className="">
-          <Link
-            to={"/forgot-password"}
-            className="text-sm text-sky-500 hover:underline"
-          >
-            Forgot Password?
-          </Link>
-        </div>
-        <div className="">
-          <div className="flex items-center border-b pb-2">
-            <Lock size={20} />
+
+        {/* Password Input & Forgot Password Link */}
+        <div>
+          <div className="relative flex items-center group">
+            <Lock
+              size={18}
+              className="absolute left-3.5 text-gray-400 group-focus-within:text-sky-400 transition-colors duration-300"
+            />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
+              placeholder="Parolingiz"
               {...register("password")}
-              placeholder="*********"
-              className="ml-3 w-full outline-none"
+              className="w-full pl-11 pr-11 py-3 bg-gray-800/60 border border-gray-700/80 rounded-xl text-white placeholder-gray-500 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all duration-300"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3.5 text-gray-400 hover:text-gray-200 transition-colors focus:outline-none"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
-          {errors.password && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.password.message}
-            </p>
-          )}
+          
+          <div className="flex justify-between items-center mt-2 px-1">
+            {errors.password?.message ? (
+              <motion.p
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs text-red-400 font-medium"
+              >
+                {errors.password.message}
+              </motion.p>
+            ) : <span />}
+
+            <Link
+              to="/forgot-password"
+              className="text-xs text-sky-400 hover:text-sky-300 transition-colors hover:underline"
+            >
+              Parolni unutdingizmi?
+            </Link>
+          </div>
         </div>
-        <button className="w-full py-3 rounded cursor-pointer bg-sky-500 hover:bg-sky-400 transition text-white">
-          Sign In
-        </button>
+
+        {/* Submit Button */}
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-gray-950 font-semibold transition-all duration-300 shadow-lg shadow-sky-500/20 disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              <span>Kirish bajarilmoqda...</span>
+            </>
+          ) : (
+            <span>Sign In</span>
+          )}
+        </motion.button>
       </form>
-      <span className="text-sm flex items-center justify-center py-4">or</span>
-      <div className="flex items-center justify-center gap-4">
-        <svg
-          className="w-10 h-10 cursor-pointer hover:bg-sky-500 rounded-full transition duration-300"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 640 640"
-        >
-          <path
-            fill="rgb(116, 192, 252)"
-            d="M564 325.8C564 467.3 467.1 568 324 568C186.8 568 76 457.2 76 320C76 182.8 186.8 72 324 72C390.8 72 447 96.5 490.3 136.9L422.8 201.8C334.5 116.6 170.3 180.6 170.3 320C170.3 406.5 239.4 476.6 324 476.6C422.2 476.6 459 406.2 464.8 369.7L324 369.7L324 284.4L560.1 284.4C562.4 297.1 564 309.3 564 325.8z"
-          />
-        </svg>
-        <svg
-          className="w-10 h-10 cursor-pointer hover:bg-sky-500 rounded-full transition duration-300"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 640 640"
-        >
-          <path
-            fill="rgb(116, 192, 252)"
-            d="M280.5 426.5C214.5 418.5 168 371 168 309.5C168 284.5 177 257.5 192 239.5C185.5 223 186.5 188 194 173.5C214 171 241 181.5 257 196C276 190 296 187 320.5 187C345 187 365 190 383 195.5C398.5 181.5 426 171 446 173.5C453 187 454 222 447.5 239C463.5 258 472 283.5 472 309.5C472 371 425.5 417.5 358.5 426C375.5 437 387 461 387 488.5L387 540.5C387 555.5 399.5 564 414.5 558C505 523.5 576 433 576 321C576 179.5 461 64 319.5 64C178 64 64 179.5 64 321C64 432 134.5 524 229.5 558.5C243 563.5 256 554.5 256 541L256 501C249 504 240 506 232 506C199 506 179.5 488 165.5 454.5C160 441 154 433 142.5 431.5C136.5 431 134.5 428.5 134.5 425.5C134.5 419.5 144.5 415 154.5 415C169 415 181.5 424 194.5 442.5C204.5 457 215 463.5 227.5 463.5C240 463.5 248 459 259.5 447.5C268 439 274.5 431.5 280.5 426.5z"
-          />
-        </svg>
+
+      {/* Or Ajratuvchi Liniya */}
+      <div className="relative flex items-center justify-center my-6">
+        <div className="border-t border-gray-800 w-full" />
+        <span className="bg-gray-900 px-3 text-xs text-gray-500 uppercase tracking-wider absolute">
+          yoki
+        </span>
       </div>
-    </>
+
+      {/* Social Login Options */}
+      <div className="flex items-center justify-center gap-4">
+        {/* Google Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          type="button"
+          aria-label="Google orqali kirish"
+          className="p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 hover:bg-gray-800 hover:border-gray-600 transition-all duration-300 group"
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <path
+              fill="#EA4335"
+              d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"
+            />
+            <path
+              fill="#4285F4"
+              d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9c-.6-.8-1-1.8-1-2.9z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 22.3 12 23z"
+            />
+          </svg>
+        </motion.button>
+
+        {/* GitHub Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          type="button"
+          aria-label="GitHub orqali kirish"
+          className="p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 hover:bg-gray-800 hover:border-gray-600 transition-all duration-300 group text-gray-300 hover:text-white"
+        >
+          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+        </motion.button>
+      </div>
+    </div>
   );
 };
 
