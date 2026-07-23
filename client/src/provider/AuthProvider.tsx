@@ -19,6 +19,7 @@ type AuthContextType = {
   handleLogin: (data: LoginData) => void;
   handleForgotPassword: (data: ForgotPasswordData) => void;
   handleResetPassword: (data: ResetPasswordData) => void;
+  handleLogout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data } = await axiosInstance.post("/auth/register", registerData);
       localStorage.setItem("accessToken", data.accessToken);
-      console.log(data)
+      console.log(data);
       toast.success("Successfully");
       navigate("/");
     } catch (error) {
@@ -73,6 +74,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      localStorage.removeItem("accessToken");
+      toast.success("Successfully");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      toast.error("Sign Out failed");
+    }
+  };
+
   return (
     <>
       <AuthContext.Provider
@@ -85,6 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           handleLogin,
           handleForgotPassword,
           handleResetPassword,
+          handleLogout,
         }}
       >
         {children}
