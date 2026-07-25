@@ -33,51 +33,79 @@ public class JwtAuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request, HttpServletResponse response){
-        if (userRepository.findByEmail(request.getEmail()).isPresent()){
-            throw new CustomBadRequestException("User already exist");}
-        UserEntity user = new UserEntity();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.USER);
-        saveUser(user);
-        return authResponse(user,response);
+       try {
+           if (userRepository.findByEmail(request.getEmail()).isPresent()){
+               throw new CustomBadRequestException("User already exist");}
+           UserEntity user = new UserEntity();
+           user.setUsername(request.getUsername());
+           user.setEmail(request.getEmail());
+           user.setPassword(passwordEncoder.encode(request.getPassword()));
+           user.setRole(Role.USER);
+           saveUser(user);
+           return authResponse(user,response);
+       } catch (RuntimeException e) {
+           throw new CustomBadRequestException(e.getMessage());
+       }
     }
     public AuthResponse login(LoginRequest request,HttpServletResponse response){
-        UserEntity user = findUserByEmail(request.getEmail());
-        if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
-            throw new CustomBadRequestException("Password doesn't match");}
-        return authResponse(user,response);
+       try {
+           UserEntity user = findUserByEmail(request.getEmail());
+           if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
+               throw new CustomBadRequestException("Password doesn't match");}
+           return authResponse(user,response);
+       } catch (RuntimeException e) {
+           throw new CustomBadRequestException(e.getMessage());
+       }
     }
     public void logout(String refreshToken,HttpServletResponse response){
-        UserEntity user = validationAndExtractionToken(refreshToken);
-        redisService.removeToken(user.getEmail());
-        cookieUtil.clearCookie(response);
+        try {
+            UserEntity user = validationAndExtractionToken(refreshToken);
+            redisService.removeToken(user.getEmail());
+            cookieUtil.clearCookie(response);
+        } catch (RuntimeException e) {
+            throw new CustomBadRequestException(e.getMessage());
+        }
     }
     public AuthResponse refresh(String refreshToken,HttpServletResponse response){
-        UserEntity user = validationAndExtractionToken(refreshToken);
-        return authResponse(user,response);
+        try {
+            UserEntity user = validationAndExtractionToken(refreshToken);
+            return authResponse(user,response);
+        } catch (RuntimeException e) {
+            throw new CustomBadRequestException(e.getMessage());
+        }
     }
     public void forgotPassword(ForgotPasswordRequest request){
-        UserEntity user = findUserByEmail(request.getEmail());
-        String token = jwtUtil.getAccessToken(user);
-        String url=clientUrl+"/reset-password?token="+token;
-        EmailPayload payload = new EmailPayload(user.getEmail(),"Reset Password",url);
-        rabbitMQProducer.sendMail(payload);
+        try {
+            UserEntity user = findUserByEmail(request.getEmail());
+            String token = jwtUtil.getAccessToken(user);
+            String url=clientUrl+"/reset-password?token="+token;
+            EmailPayload payload = new EmailPayload(user.getEmail(),"Reset Password",url);
+            rabbitMQProducer.sendMail(payload);
+        } catch (RuntimeException e) {
+            throw new CustomBadRequestException(e.getMessage());
+        }
     }
     public void resetPassword(ResetPasswordRequest request){
-        if (!request.getPassword().equals(request.getConfirmPassword())){
-            throw new CustomBadRequestException("Password and confirm password should be equal");
-        }
-        UserEntity user = validationAndExtractionToken(request.getToken());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        saveUser(user);
+       try {
+           if (!request.getPassword().equals(request.getConfirmPassword())){
+               throw new CustomBadRequestException("Password and confirm password should be equal");
+           }
+           UserEntity user = validationAndExtractionToken(request.getToken());
+           user.setPassword(passwordEncoder.encode(request.getPassword()));
+           saveUser(user);
+       } catch (RuntimeException e) {
+           throw new CustomBadRequestException(e.getMessage());
+       }
     }
     public UserEntity validationAndExtractionToken(String token){
-        String email = jwtUtil.extractEmailFromToken(token);
-        if (!jwtUtil.validateToken(token)){
-            throw new CustomBadRequestException("Token is invalid or expired");}
-        return findUserByEmail(email);
+        try {
+            String email = jwtUtil.extractEmailFromToken(token);
+            if (!jwtUtil.validateToken(token)){
+                throw new CustomBadRequestException("Token is invalid or expired");}
+            return findUserByEmail(email);
+        } catch (RuntimeException e) {
+            throw new CustomBadRequestException(e.getMessage());
+        }
     }
     public UserEntity findUserByEmail(String email){
         return  userRepository.findByEmail(email).orElseThrow(()-> new CustomNotFoundException("User not found"));

@@ -45,7 +45,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mt-6 text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed"
           >
-            React, TypeScript va zamonaviy texnologiyalar yordamida yuqori unumdorlikka ega bo'lgan interaktiv ilovalarni barpo etaman.
+            Java/Spring Boot,React, TypeScript va zamonaviy texnologiyalar yordamida yuqori unumdorlikka ega bo'lgan interaktiv ilovalarni barpo etaman.
           </motion.p>
 
           <motion.div
