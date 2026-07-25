@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Lock, Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "react-router-dom";
 import {
   resetPasswordSchema,
   type ResetPasswordData,
@@ -10,34 +11,55 @@ import { UseAuth } from "../provider/AuthProvider";
 import { motion } from "framer-motion";
 
 const ResetPasswordForm: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token") || "";
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordData>({
     resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      token: token,
+    },
   });
+
+  // 2. Token URL'da yangilansa formaga o'tkazish
+  useEffect(() => {
+    if (token) {
+      setValue("token", token);
+    }
+  }, [token, setValue]);
 
   const { handleResetPassword } = UseAuth();
 
+  // 3. Form submit qilish funksiyasi
   const onSubmit = async (data: ResetPasswordData) => {
     try {
-      if (handleResetPassword) {
-        await handleResetPassword(data);
-      } else {
-        console.log("Reset password data:", data);
-      }
+      await handleResetPassword(data);
     } catch (error) {
-      console.error("Reset Password Error:", error);
+      console.error("Parol yangilashda xatolik:", error);
     }
   };
 
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {/* Token uchun yashirin (hidden) input */}
+        <input type="hidden" {...register("token")} />
+
+        {/* Token topilmasa ko'rsatiladigan xabar */}
+        {!token && (
+          <p className="text-xs text-red-400 font-medium bg-red-500/10 p-2.5 rounded-lg border border-red-500/20">
+            Aravandagi token topilmadi yoki yaroqsiz! Iltimos, havolani qaytadan tekshiring.
+          </p>
+        )}
+
         {/* New Password Input */}
         <div>
           <div className="relative flex items-center group">
@@ -109,8 +131,8 @@ const ResetPasswordForm: React.FC = () => {
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
-          disabled={isSubmitting}
-          className="w-full py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-gray-950 font-semibold transition-all duration-300 shadow-lg shadow-sky-500/20 disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
+          disabled={isSubmitting || !token}
+          className="w-full py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-gray-950 font-semibold transition-all duration-300 shadow-lg shadow-sky-500/20 disabled:opacity-60 flex items-center justify-center gap-2 mt-2 cursor-pointer disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
             <>

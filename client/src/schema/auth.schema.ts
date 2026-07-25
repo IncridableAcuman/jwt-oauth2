@@ -31,8 +31,8 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
     password: z.string().min(1,validMessaging.requiredPassword).min(8, validMessaging.passwordMin).max(50, validMessaging.passwordMax),
     confirmPassword: z.string().min(1,validMessaging.requiredConfirmPassword).min(8, validMessaging.confirmPasswordMin).max(50, validMessaging.confirmPasswordMax),
-    token: z.string()
-}).refine((data) => data.password !== data.confirmPassword, {
+    token: z.string().min(1,"Token is required")
+}).refine((data) => data.password === data.confirmPassword, {
     message: "Password doesn't mismatch",
     path: ["confirmPassword"]
 })

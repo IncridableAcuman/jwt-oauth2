@@ -16,7 +16,7 @@ const ResetPassword: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-5xl bg-gray-900/90 border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-xl flex flex-col md:flex-row min-h-[620px]"
+        className="w-full max-w-5xl bg-gray-900/90 border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-xl flex flex-col md:flex-row min-h-155"
       >
         {/* Chap Tomon: Vizual va Rasm bo'limi */}
         <div className="relative hidden md:block md:w-1/2 overflow-hidden group">
@@ -30,7 +30,7 @@ const ResetPassword: React.FC = () => {
           />
 
           {/* Rasm ustidagi gradient va overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-gray-950 via-gray-950/40 to-transparent" />
 
           {/* Rasm ustidagi matnlar */}
           <div className="absolute bottom-12 left-0 right-0 text-center text-white px-8">
