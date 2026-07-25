@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+@Slf4j
 @Component
 public class JwtUtil {
     @Value("${jwt.secret}")
@@ -75,6 +77,7 @@ public class JwtUtil {
         try {
             return !isTokenExpiration(token);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return false;
         }
     }

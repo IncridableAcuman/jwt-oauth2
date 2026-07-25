@@ -1,5 +1,6 @@
 package com.auth.server.config;
 
+import com.auth.server.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final CorsConfig corsConfig;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -31,6 +34,11 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated()
                         )
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login(
+                        oauth2->oauth2
+                                .userInfoEndpoint(userInfo-> userInfo.userService(customOAuth2UserService))
+                                .successHandler(oAuth2SuccessHandler)
+                )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

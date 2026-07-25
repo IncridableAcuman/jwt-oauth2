@@ -35,6 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 email= jwtUtil.extractEmailFromToken(token);
             } catch(Exception e){
+                logger.error(e.getLocalizedMessage());
                 filterChain.doFilter(request, response);
                 return;
             }

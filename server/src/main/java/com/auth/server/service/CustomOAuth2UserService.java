@@ -1,0 +1,41 @@
+package com.auth.server.service;
+
+import com.auth.server.entity.UserEntity;
+import com.auth.server.enums.Role;
+import com.auth.server.exception.CustomBadRequestException;
+import com.auth.server.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+    private final UserRepository userRepository;
+
+    @Override
+    public @NonNull OAuth2User loadUser(@NonNull OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        try {
+            OAuth2User user = super.loadUser(userRequest);
+
+            String email = user.getAttribute("email");
+            String name = user.getAttribute("name");
+
+            userRepository.findByEmail(email).orElseGet(()->{
+                UserEntity newUser = new UserEntity();
+                newUser.setUsername(name != null ? name : email);
+                newUser.setEmail(email);
+                newUser.setPassword("");
+                newUser.setRole(Role.USER);
+                return userRepository.save(newUser);
+            });
+            return user;
+        } catch (OAuth2AuthenticationException exception){
+            throw new CustomBadRequestException(exception.getMessage());
+        }
+    }
+}

@@ -6,11 +6,13 @@ import com.auth.server.exception.CustomInternalServerErrorException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MailUtil {
@@ -24,8 +26,10 @@ public class MailUtil {
             helper.setTo(payload.to());
             helper.setSubject(payload.subject());
             helper.setText(payload.text(),true);
+            log.info("Message sending");
             javaMailSender.send(message);
         } catch (MessagingException exception){
+            log.error(exception.getMessage());
             throw new CustomInternalServerErrorException(exception.getMessage());
         }
     }

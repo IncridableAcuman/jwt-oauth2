@@ -2,6 +2,7 @@ package com.auth.server.util;
 
 import com.auth.server.exception.CustomBadRequestException;
 import com.auth.server.exception.CustomInternalServerErrorException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 
+@Slf4j
 @Component
 public class FileUtil {
     @Value("${file.upload.dir}")
@@ -20,22 +22,26 @@ public class FileUtil {
 
     public String saveFile(MultipartFile file){
         if (file==null || file.isEmpty()){
+            log.warn("File doesn't exist");
             throw new CustomBadRequestException("File is null or empty");
         }
         try {
             Path filePath = Paths.get(uploadDir);
             if (!Files.exists(filePath)){
+                log.info("Creating direct");
                 Files.createDirectories(filePath);
             }
             String originalName = file.getOriginalFilename();
             String extension=".";
             if (originalName != null){
+                log.info("Existing file original name");
                 extension = originalName.substring(originalName.indexOf("."));
             }
             String fileName = UUID.randomUUID()+extension;
             Path path = filePath.resolve(fileName);
             return path.toString();
         } catch (IOException exception){
+            log.error(exception.getMessage());
             throw new CustomInternalServerErrorException(exception.getMessage());
         }
     }
@@ -44,6 +50,7 @@ public class FileUtil {
             Path path = Paths.get(uploadDir,fileName);
             Files.deleteIfExists(path);
         } catch (IOException exception){
+            log.error(exception.getMessage());
             throw new CustomInternalServerErrorException(exception.getMessage());
         }
     }
