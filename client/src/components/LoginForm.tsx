@@ -28,6 +28,13 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+  const handleGithubLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/github";
+  };
+
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -79,7 +86,7 @@ const LoginForm: React.FC = () => {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          
+
           <div className="flex justify-between items-center mt-2 px-1">
             {errors.password?.message ? (
               <motion.p
@@ -89,7 +96,9 @@ const LoginForm: React.FC = () => {
               >
                 {errors.password.message}
               </motion.p>
-            ) : <span />}
+            ) : (
+              <span />
+            )}
 
             <Link
               to="/forgot-password"
@@ -134,6 +143,7 @@ const LoginForm: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="button"
+          onClick={handleGoogleLogin}
           aria-label="Google orqali kirish"
           className="p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 hover:bg-gray-800 hover:border-gray-600 transition-all duration-300 group"
         >
@@ -162,6 +172,7 @@ const LoginForm: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="button"
+          onClick={handleGithubLogin}
           aria-label="GitHub orqali kirish"
           className="p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 hover:bg-gray-800 hover:border-gray-600 transition-all duration-300 group text-gray-300 hover:text-white"
         >

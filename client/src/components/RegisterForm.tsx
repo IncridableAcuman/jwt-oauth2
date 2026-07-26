@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 const RegisterForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const {
     register,
     handleSubmit,
@@ -25,6 +25,13 @@ const RegisterForm: React.FC = () => {
     } catch (error) {
       console.error("Register Error:", error);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+  const handleGithubLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/github";
   };
 
   return (
@@ -148,6 +155,7 @@ const RegisterForm: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="button"
+          onClick={handleGoogleLogin}
           aria-label="Google orqali kirish"
           className="p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 hover:bg-gray-800 hover:border-gray-600 transition-all duration-300 group"
         >
@@ -176,6 +184,7 @@ const RegisterForm: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="button"
+          onClick={handleGithubLogin}
           aria-label="GitHub orqali kirish"
           className="p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 hover:bg-gray-800 hover:border-gray-600 transition-all duration-300 group text-gray-300 hover:text-white"
         >

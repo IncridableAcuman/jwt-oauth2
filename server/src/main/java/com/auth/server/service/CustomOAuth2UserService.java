@@ -2,7 +2,6 @@ package com.auth.server.service;
 
 import com.auth.server.entity.UserEntity;
 import com.auth.server.enums.Role;
-import com.auth.server.exception.CustomBadRequestException;
 import com.auth.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -19,7 +18,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public @NonNull OAuth2User loadUser(@NonNull OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        try {
             OAuth2User user = super.loadUser(userRequest);
 
             String email = user.getAttribute("email");
@@ -34,8 +32,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 return userRepository.save(newUser);
             });
             return user;
-        } catch (OAuth2AuthenticationException exception){
-            throw new CustomBadRequestException(exception.getMessage());
-        }
     }
 }

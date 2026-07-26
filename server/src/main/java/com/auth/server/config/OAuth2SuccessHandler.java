@@ -6,9 +6,9 @@ import com.auth.server.exception.CustomBadRequestException;
 import com.auth.server.service.JwtAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -17,12 +17,15 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtAuthService jwtAuthService;
 
     @Value("${client.url}")
     private String clientUrl;
+
+    public OAuth2SuccessHandler(@Lazy JwtAuthService authService){
+        this.jwtAuthService=authService;
+    }
 
     @Override
     public void onAuthenticationSuccess(
