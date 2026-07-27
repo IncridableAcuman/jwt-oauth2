@@ -21,6 +21,9 @@ public class ProfileService {
 
     public ProfileResponse editProfileAvatar(Long id, MultipartFile avatar){
         UserEntity user = userRepository.findById(id).orElseThrow(()-> new CustomNotFoundException("User not found"));
+        if (user.getAvatar() !=null){
+            fileUtil.removeFile(user.getAvatar());
+        }
         user.setAvatar(fileUtil.saveFile(avatar));
         UserEntity saved = userRepository.save(user);
         return ProfileResponse.from(saved);

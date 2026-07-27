@@ -43,7 +43,7 @@ public class FileUtil {
             String fileName = UUID.randomUUID()+extension;
             Path path = filePath.resolve(fileName);
 
-            Files.copy(file.getInputStream(), filePath,StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file.getInputStream(), path,StandardCopyOption.REPLACE_EXISTING);
 
             return fileName;
         } catch (IOException exception){
