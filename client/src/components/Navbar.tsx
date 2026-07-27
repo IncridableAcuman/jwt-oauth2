@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { UseAuth } from "../provider/AuthProvider";
 
 interface NavItem {
@@ -18,6 +19,7 @@ const navItems: NavItem[] = [
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
   const { handleLogout } = UseAuth();
+  const navigate = useNavigate();
 
   const handleNavClick = (href: string) => {
     setOpen(false);
@@ -30,7 +32,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-gray-900/80 backdrop-blur-md text-white border-b border-gray-800/80 z-50">
+    <nav className="fixed top-0 left-0 w-full bg-gray-900/85 backdrop-blur-md text-white border-b border-gray-800/80 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <motion.div
@@ -64,13 +66,23 @@ const Navbar: React.FC = () => {
           ))}
         </motion.ul>
 
-        {/* Desktop Profile & Logout */}
+        {/* Desktop Profile & Logout Buttons */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="hidden md:flex items-center"
+          className="hidden md:flex items-center gap-3"
         >
+          {/* Profile Button */}
+          <button
+            onClick={() => navigate("/profile")}
+            title="Profil"
+            className="p-2 rounded-xl bg-gray-800/60 text-gray-300 hover:text-cyan-400 hover:bg-cyan-500/10 border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300 active:scale-95"
+          >
+            <User size={18} />
+          </button>
+
+          {/* Logout Button */}
           <button
             onClick={() => handleLogout()}
             title="Chiqish"
@@ -112,13 +124,30 @@ const Navbar: React.FC = () => {
                 </li>
               ))}
 
-              <li className="pt-2 w-full flex justify-center">
+              <div className="w-4/5 h-px bg-gray-800 my-2" />
+
+              {/* Mobile Profile Link */}
+              <li className="w-full flex justify-center">
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    navigate("/profile");
+                  }}
+                  className="flex items-center justify-center gap-2 w-4/5 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-medium hover:bg-cyan-500/20 transition-all"
+                >
+                  <User size={18} />
+                  <span>Profil</span>
+                </button>
+              </li>
+
+              {/* Mobile Logout Link */}
+              <li className="w-full flex justify-center">
                 <button
                   onClick={() => {
                     setOpen(false);
                     handleLogout();
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500/20 transition-all"
+                  className="flex items-center justify-center gap-2 w-4/5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500/20 transition-all"
                 >
                   <LogOut size={18} />
                   <span>Chiqish</span>

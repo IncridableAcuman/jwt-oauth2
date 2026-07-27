@@ -3,7 +3,8 @@ import { UseProfile } from "../provider/ProfileProvider";
 import { Camera, User, Mail, ShieldCheck, Loader2 } from "lucide-react";
 
 const ProfilePage = () => {
-  const { profile, loading, fetchProfile, handleEditProfileAvatar } = UseProfile();
+  const { profile, loading, fetchProfile, handleEditProfileAvatar } =
+    UseProfile();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -15,6 +16,16 @@ const ProfilePage = () => {
     if (file && profile) {
       handleEditProfileAvatar(profile.id, file);
     }
+  };
+
+  const FILE_BASE_URL = "http://localhost:8080/files/";
+
+  const getAvatarUrl = (avatarPath?: string | null) => {
+    if (!avatarPath) return null;
+    if (avatarPath.startsWith("http://") || avatarPath.startsWith("https://")) {
+      return avatarPath;
+    }
+    return `${FILE_BASE_URL}${avatarPath}`;
   };
 
   if (loading && !profile) {
@@ -34,9 +45,13 @@ const ProfilePage = () => {
             <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-sky-500 bg-gray-800 flex items-center justify-center">
               {profile?.avatar ? (
                 <img
-                  src={profile.avatar}
+                  src={`${profile.avatar} `}
                   alt={profile.username}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Rasm serverda topilmasa yoki yuklanmay qolsa alt holatga o'tkazish
+                    (e.target as HTMLElement).style.display = "none";
+                  }}
                 />
               ) : (
                 <User size={48} className="text-gray-400" />

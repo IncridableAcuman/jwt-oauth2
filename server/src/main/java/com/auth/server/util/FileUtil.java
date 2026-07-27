@@ -1,17 +1,20 @@
 package com.auth.server.util;
 
-import com.auth.server.exception.CustomBadRequestException;
-import com.auth.server.exception.CustomInternalServerErrorException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.auth.server.exception.CustomBadRequestException;
+import com.auth.server.exception.CustomInternalServerErrorException;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -39,7 +42,10 @@ public class FileUtil {
             }
             String fileName = UUID.randomUUID()+extension;
             Path path = filePath.resolve(fileName);
-            return path.toString();
+
+            Files.copy(file.getInputStream(), filePath,StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
         } catch (IOException exception){
             log.error(exception.getMessage());
             throw new CustomInternalServerErrorException(exception.getMessage());
