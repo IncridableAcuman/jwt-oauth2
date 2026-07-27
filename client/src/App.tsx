@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./guard/ProtectedRoute";
 import OAuth2RedirectHandler from "./components/OAuth2RedirectHandler";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Routes>
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home />} />
+          <Route path="/profile/:id" element={<Profile/>} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

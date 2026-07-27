@@ -6,9 +6,8 @@ import com.auth.server.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/profile")
@@ -19,5 +18,9 @@ public class ProfileController {
     @GetMapping
     public ResponseEntity<ProfileResponse> getProfile(@AuthenticationPrincipal UserEntity user){
         return ResponseEntity.ok(profileService.getProfile(user));
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProfileResponse> editProfileAvatar(@PathVariable Long id, @ModelAttribute MultipartFile avatar){
+        return ResponseEntity.ok(profileService.editProfileAvatar(id,avatar));
     }
 }
