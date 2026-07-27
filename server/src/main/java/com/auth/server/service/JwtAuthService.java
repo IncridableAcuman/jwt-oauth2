@@ -17,14 +17,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthService {
     @Value("${client.url}")
     private String clientUrl;
-
     private final UserRepository userRepository;
     private final RedisService redisService;
     private final CookieUtil cookieUtil;
@@ -32,38 +30,26 @@ public class JwtAuthService {
     private final RabbitMQProducer rabbitMQProducer;
     private final PasswordEncoder passwordEncoder;
 
-
     @Transactional
-    public AuthResponse register(RegisterRequest request, HttpServletResponse response){
+    public void register(RegisterRequest request){
        try {
-           if (userRepository.findByEmail(request.getEmail()).isPresent()){
-               log.warn("Existing user");
-               throw new CustomBadRequestException("User already exist");
-           }
+           if (userRepository.findByEmail(request.getEmail()).isPresent()){log.warn("Existing user");throw new CustomBadRequestException("User already exist");}
            UserEntity user = new UserEntity();
            user.setUsername(request.getUsername());
            user.setEmail(request.getEmail());
            user.setPassword(passwordEncoder.encode(request.getPassword()));
            user.setRole(Role.USER);
            saveUser(user);
-           return authResponse(user,response);
-       } catch (RuntimeException e) {
-           log.error(e.getMessage());
-           throw new CustomBadRequestException(e.getMessage());
-       }
+           sendToEmail(user);
+       } catch (RuntimeException e) {log.error(e.getMessage());throw new CustomBadRequestException(e.getMessage());}
     }
     public AuthResponse login(LoginRequest request,HttpServletResponse response){
        try {
            UserEntity user = findUserByEmail(request.getEmail());
-           if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){
-               log.warn("Password does not matching");
-               throw new CustomBadRequestException("Password doesn't match");
-           }
+           if (!user.isEnabled()){throw new CustomBadRequestException("Email does not verified");}
+           if (!passwordEncoder.matches(request.getPassword(),user.getPassword())){log.warn("Password does not matching");throw new CustomBadRequestException("Password doesn't match");}
            return authResponse(user,response);
-       } catch (RuntimeException e) {
-           log.error(e.getMessage());
-           throw new CustomBadRequestException(e.getMessage());
-       }
+       } catch (RuntimeException e) {log.error(e.getMessage());throw new CustomBadRequestException(e.getMessage());}
     }
     public void logout(String refreshToken,HttpServletResponse response){
         try {
@@ -73,19 +59,14 @@ public class JwtAuthService {
             log.info("Token removing from cache");
             cookieUtil.clearCookie(response);
             log.info("Clear refresh token from cookie");
-        } catch (RuntimeException e) {
-            log.error(e.getMessage());
-            throw new CustomBadRequestException(e.getMessage());
+        } catch (RuntimeException e) {log.error(e.getMessage());throw new CustomBadRequestException(e.getMessage());
         }
     }
     public AuthResponse refresh(String refreshToken,HttpServletResponse response){
         try {
             UserEntity user = validationAndExtractionToken(refreshToken);
             return authResponse(user,response);
-        } catch (RuntimeException e) {
-            log.error(e.getMessage());
-            throw new CustomBadRequestException(e.getMessage());
-        }
+        } catch (RuntimeException e) {log.error(e.getMessage());throw new CustomBadRequestException(e.getMessage());}
     }
     public void forgotPassword(ForgotPasswordRequest request){
         try {
@@ -95,39 +76,28 @@ public class JwtAuthService {
             EmailPayload payload = new EmailPayload(user.getEmail(),"Reset Password",url);
             log.info("Sending token for resetting password");
             rabbitMQProducer.sendMail(payload);
-        } catch (RuntimeException e) {
-            throw new CustomBadRequestException(e.getMessage());
-        }
+        } catch (RuntimeException e) {throw new CustomBadRequestException(e.getMessage());}
     }
     public void resetPassword(ResetPasswordRequest request){
        try {
-           if (!request.getPassword().equals(request.getConfirmPassword())){
-               log.warn("Warning with password matching");
-               throw new CustomBadRequestException("Password and confirm password should be equal");
-           }
+           if (!request.getPassword().equals(request.getConfirmPassword())){log.warn("Warning with password matching");throw new CustomBadRequestException("Password and confirm password should be equal");}
            UserEntity user = validationAndExtractionToken(request.getToken());
            user.setPassword(passwordEncoder.encode(request.getPassword()));
            saveUser(user);
-       } catch (RuntimeException e) {
-           log.error(e.getMessage());
-           throw new CustomBadRequestException(e.getMessage());
-       }
+       } catch (RuntimeException e) {log.error(e.getMessage());throw new CustomBadRequestException(e.getMessage());}
     }
+    public void verifyEmail(String token){
+        UserEntity user = validationAndExtractionToken(token);
+        user.setEnabled(true);
+        saveUser(user);
+    }
+
     public UserEntity validationAndExtractionToken(String token){
-        try {
-            String email = jwtUtil.extractEmailFromToken(token);
-            if (!jwtUtil.validateToken(token)){
-                log.warn("Fail token validating");
-                throw new CustomBadRequestException("Token is invalid or expired");}
-            return findUserByEmail(email);
-        } catch (RuntimeException e) {
-            log.error(e.getMessage());
-            throw new CustomBadRequestException(e.getMessage());
-        }
+        String email = jwtUtil.validationAndExtractEmailFromToken(token);
+        return findUserByEmail(email);
     }
     public UserEntity findUserByEmail(String email){
-        return  userRepository.findByEmail(email).orElseThrow(()-> new CustomNotFoundException("User not found"));
-    }
+        return  userRepository.findByEmail(email).orElseThrow(()-> new CustomNotFoundException("User not found"));}
     @Transactional
     public void saveUser(UserEntity user){
         userRepository.save(user);
@@ -140,5 +110,11 @@ public class JwtAuthService {
         cookieUtil.addCookie(newRefreshToken,response);
         redisService.saveToken(user.getEmail(), newRefreshToken);
         return AuthResponse.from(newAccessToken);
+    }
+    public void sendToEmail(UserEntity user){
+        String token = jwtUtil.getAccessToken(user);
+        String url = clientUrl + "/verify-email?token="+token;
+        EmailPayload payload = new EmailPayload(user.getEmail(),"Verify Email",url);
+        rabbitMQProducer.sendMail(payload);
     }
 }

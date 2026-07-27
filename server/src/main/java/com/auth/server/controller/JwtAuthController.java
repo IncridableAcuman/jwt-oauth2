@@ -15,8 +15,9 @@ public class JwtAuthController {
     private final JwtAuthService jwtAuthService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response){
-        return ResponseEntity.ok(jwtAuthService.register(request,response));
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request){
+        jwtAuthService.register(request);
+        return ResponseEntity.ok("Verification link sent to email.");
     }
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response){
@@ -40,5 +41,10 @@ public class JwtAuthController {
     public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request){
         jwtAuthService.resetPassword(request);
         return ResponseEntity.ok("Password updated successfully");
+    }
+    @GetMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token){
+        jwtAuthService.verifyEmail(token);
+        return ResponseEntity.ok("Email verified successfully");
     }
 }

@@ -1,6 +1,7 @@
 package com.auth.server.util;
 
 import com.auth.server.entity.UserEntity;
+import com.auth.server.exception.CustomBadRequestException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -79,6 +80,18 @@ public class JwtUtil {
         } catch (Exception e) {
             log.error(e.getMessage());
             return false;
+        }
+    }
+    public String validationAndExtractEmailFromToken(String token){
+        try {
+            String email = extractEmailFromToken(token);
+            if (!validateToken(token)){
+                log.warn("Fail token validating");
+                throw new CustomBadRequestException("Token is invalid or expired");}
+            return email;
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new CustomBadRequestException(e.getMessage());
         }
     }
 }
