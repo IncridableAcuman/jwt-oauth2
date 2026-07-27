@@ -20,6 +20,7 @@ type AuthContextType = {
   handleForgotPassword: (data: ForgotPasswordData) => Promise<void>;
   handleResetPassword: (data: ResetPasswordData) => Promise<void>;
   handleLogout: () => Promise<void>;
+  handleVerifyEmail: (token:string)=>void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -53,9 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleRegister = async (registerData: RegisterData) => {
     try {
       const { data } = await axiosInstance.post("/auth/register", registerData);
-      localStorage.setItem("accessToken", data.accessToken);
-      toast.success("Muvaffaqiyatli ro'yxatdan o'tingiz!");
-      navigate("/");
+      toast.success(data || "Emailingizni tekshiring");
     } catch (error: any) {
       console.error(error);
       toast.error(getErrorMessage(error, "Ro'yxatdan o'tishda xatolik yuz berdi"));
@@ -108,6 +107,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handleVerifyEmail = async (token:string) =>{
+    try {
+      const {data} = await axiosInstance.get("/auth/verify-email",{params:{token}});
+      toast.success(data || "Email successfully verified")
+    } catch (error) {
+      console.log(error);
+      toast.error(getErrorMessage(error,"Emailni verifikatsiya qilishda xatolik"))
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -120,6 +129,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         handleForgotPassword,
         handleResetPassword,
         handleLogout,
+        handleVerifyEmail
       }}
     >
       {children}
