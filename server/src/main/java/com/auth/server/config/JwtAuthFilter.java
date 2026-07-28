@@ -24,6 +24,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImp userDetailsServiceImp;
     private final JwtUtil jwtUtil;
 
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
@@ -36,7 +37,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 email= jwtUtil.extractEmailFromToken(token);
             } catch(Exception e){
                 logger.error(e.getLocalizedMessage());
-                filterChain.doFilter(request, response);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Access token is expired");
                 return;
             }
         }

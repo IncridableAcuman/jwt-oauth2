@@ -5,15 +5,18 @@ import axios, {
   type AxiosResponse,
 } from "axios";
 
+export const BASE_URL = "http://localhost:8080";
+
 const axiosInstance: AxiosInstance = axios.create({
   withCredentials: true,
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: `${BASE_URL}/api/v1`
 });
+
 
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken");
-    if (token) {
+    if (token && config.url !== "/auth/refresh") {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -34,7 +37,7 @@ axiosInstance.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
-        const { data } = await axiosInstance.get("/auth/refresh");
+        const { data } = await axios.get(`${BASE_URL}/api/v1/auth/refresh`);
         localStorage.setItem("accessToken", data.accessToken);
         originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return axiosInstance(originalRequest);

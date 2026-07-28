@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { UseProfile } from "../provider/ProfileProvider";
 import { Camera, User, Mail, ShieldCheck, Loader2 } from "lucide-react";
 
-const FILE_BASE_URL = "http://localhost:8080/files/";
+const FILE_BASE_URL = "http://localhost:8080/files";
 
 const ProfilePage = () => {
   const { profile, loading, fetchProfile, handleEditProfileAvatar } =
@@ -55,7 +55,7 @@ const ProfilePage = () => {
               <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-sky-500 bg-gray-800 flex items-center justify-center">
                 {avatarUrl ? (
                     <img
-                        src={avatarUrl}
+                        src={`${FILE_BASE_URL}/${profile?.avatar}`}
                         alt={profile?.username || "User avatar"}
                         className="w-full h-full object-cover"
                         onError={(e) => {
